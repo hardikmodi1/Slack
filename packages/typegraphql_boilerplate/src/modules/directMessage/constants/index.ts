@@ -1,0 +1,1 @@
+export const DIRECT_MESSAGE="DIRECT_MESSAGE"
