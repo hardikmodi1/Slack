@@ -1,11 +1,5 @@
 import { Field, ID, ObjectType } from "type-graphql";
-import {
-	BaseEntity,
-	Column,
-	Entity,
-	OneToMany,
-	PrimaryGeneratedColumn
-} from "typeorm";
+import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ChannelMember } from "./ChannelMember";
 import { DirectMessage } from "./DirectMessage";
 import { Message } from "./Message";
@@ -15,8 +9,8 @@ import { TeamMember } from "./TeamMember";
 @Entity()
 export class User extends BaseEntity {
 	@Field(() => ID)
-	@PrimaryGeneratedColumn()
-	id: number;
+	@PrimaryGeneratedColumn('uuid')
+  id: string;
 
 	@Field()
 	@Column("varchar", { length: 255, unique: true })

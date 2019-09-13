@@ -10,7 +10,7 @@ export class AddTeamMemberResolver {
 	@Mutation(() => ErrorType, { nullable: true })
 	async addTeamMember(
 		@Arg("email") email: string,
-		@Arg("teamId") teamId: number,
+		@Arg("teamId") teamId: string,
 		@Ctx() ctx: Context
 	): Promise<ErrorType | null> {
 		if (!email || !email.trim()) {

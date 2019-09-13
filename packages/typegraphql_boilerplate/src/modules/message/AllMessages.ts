@@ -7,7 +7,7 @@ import { Context } from "../../types/Context";
 export class AllMessagesResolver {
 	@Query(() => [Message])
 	async allMessages(
-		@Arg("channelId") channelId: number,
+		@Arg("channelId") channelId: string,
 		@Arg("offset") offset: number,
 		@Ctx() ctx: Context
 	): Promise<Message[]> {
@@ -21,7 +21,7 @@ export class AllMessagesResolver {
 		// };
 		// return await Message.find(findOptions);
 		const messages: Message[] = await getConnection().query(
-			`select * from message where "channelId"=${channelId} order by time DESc limit 15 offset ${offset}`
+			`select * from message where "channelId"='${channelId}' order by time DESc limit 15 offset ${offset}`
 		);
 		return messages.reverse();
 	}

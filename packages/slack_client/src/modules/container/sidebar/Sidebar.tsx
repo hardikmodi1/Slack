@@ -3,7 +3,8 @@ import { useMutation } from "react-apollo";
 import {
 	AddTeamMemberMutatioMutation,
 	AddTeamMemberMutatioMutationVariables,
-	Channel
+	Channel,
+	Team
 } from "../../../generated/graphqlTypes";
 import { ADD_TEAM_MEMBER_MUTATION } from "../../../modules/graphql/team/mutation/addTeamMember";
 import { normalizeErrors } from "../../../modules/shared/normalizeError";
@@ -14,8 +15,8 @@ import DirectMessageModal from "./directMessage/DirectMessageModal";
 import Teams from "./Teams";
 
 interface Props {
-	teams: any;
-	team: any;
+	teams: Team[];
+	team: Team;
 	teamIdx: number;
 	username: string;
 }
@@ -69,7 +70,7 @@ const Sidebar: React.FC<Props> = ({ teams, team, teamIdx, username }) => {
 
 	async function addTeamMemberSubmit(email: string) {
 		const { data: addTeamMemberData } = await addTeamMember({
-			variables: { email, teamId: parseFloat(teams[teamIdx].id) }
+			variables: { email, teamId: teams[teamIdx].id }
 		});
 		if (
 			addTeamMemberData &&
@@ -102,9 +103,9 @@ const Sidebar: React.FC<Props> = ({ teams, team, teamIdx, username }) => {
 			</Teams>
 			<Channels
 				team={team}
-				channels={regularChannels}
+				regularChannels={regularChannels}
 				username={username}
-				users={team.directMessageUsers}
+				dmChannels={dmChannels}
 				onAddChannelClick={onAddChannelClick}
 				onAddTeamMemberClick={onAddTeamMemberClick}
 				onDirectMessageClick={onDirectMessageClick}

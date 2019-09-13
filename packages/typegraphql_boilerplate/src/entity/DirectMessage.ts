@@ -13,8 +13,8 @@ import { User } from "./User";
 @Entity()
 export class DirectMessage extends BaseEntity {
 	@Field(() => ID)
-	@PrimaryGeneratedColumn()
-	id: number;
+	@PrimaryGeneratedColumn("uuid")
+	id: string;
 
 	@Field()
 	@Column("text")

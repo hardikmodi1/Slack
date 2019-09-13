@@ -9,7 +9,7 @@ export class CreateChannelInput {
 	isPublic: boolean;
 
 	@Field()
-	teamId: number;
+	teamId: string;
 
 	@Field(() => [String], { nullable: true })
 	members: string[];

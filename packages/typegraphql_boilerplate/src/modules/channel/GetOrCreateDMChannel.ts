@@ -1,39 +1,41 @@
-import { Arg, Ctx, Int, Mutation, Resolver } from "type-graphql";
+import { Arg, Ctx, Mutation, Resolver } from "type-graphql";
 import { getConnection } from "typeorm";
 import { Channel } from "../../entity/Channel";
 import { ChannelMember } from "../../entity/ChannelMember";
-import { Team } from "../../entity/Team";
 import { Context } from "../../types/Context";
+import ComposeErrorMessage from "../shared/ComposeErrorMessage";
+import CreateChannelOutput from "./createChannel/CreateChannelOutput";
 
 @Resolver()
 export class GetOrCreateDMChannelResolver {
-	@Mutation(() => Int)
+	@Mutation(() => [CreateChannelOutput])
 	async getOrCreateDMChannel(
 		@Arg("teamId") teamId: string,
-		@Arg("members", () => [String]) members: string[],
+		@Arg("member") member: string,
 		@Ctx() ctx: Context
-	): Promise<number> {
+	): Promise<Array<typeof CreateChannelOutput>> {
 		if (!ctx.req.session!.userId) {
-			return -1;
+			return [ComposeErrorMessage("login", "Session expired!")];
 		}
-		const allMembers = [...members, ctx.req.session!.userId.toString()];
+		const members: string[] = [member, ctx.req.session!.userId];
 		const isDMChannelExists = await getConnection().query(`
-      select ch.id from 
+      select ch.id,ch.name,ch."dmChannel" from 
       channel as ch, channel_member as chm
-      where ch.id=chm."channelId" and ch."dmChannel"=true and ch."teamId"=${teamId} and ch.public=false
-      group by ch.id having array_agg(chm."userId") @>Array[${allMembers}] and count(chm."userId")=${allMembers.length}
+      where ch.id=chm."channelId" and ch."dmChannel"=true and ch."teamId"='${teamId}' and ch.public=false
+      group by ch.id having array_agg(chm."userId") @>Array['${members[0]}','${members[1]}']::uuid[] and count(chm."userId")=${members.length}
     `);
+		console.log(isDMChannelExists);
 		if (isDMChannelExists.length) {
-			return isDMChannelExists[0].id;
+			return isDMChannelExists;
 		}
-		const team: Team | undefined = await Team.findOne({
-			where: { id: teamId }
-		});
+		const users = await getConnection().query(`
+			select u.username from public.user as u where u.id in ('${members[0]}','${members[1]}')
+		`);
 		const channel = await Channel.create({
 			dmChannel: true,
 			public: false,
-			name: "First",
-			team
+			name: users.map((user: any) => user.username).join(", "),
+			teamId
 		}).save();
 		await getConnection()
 			.createQueryBuilder()
@@ -43,11 +45,11 @@ export class GetOrCreateDMChannelResolver {
 				members.map(member => {
 					return {
 						channelId: channel.id,
-						userId: parseInt(member, 10)
+						userId: member
 					};
 				})
 			)
 			.execute();
-		return channel.id;
+		return [channel];
 	}
 }

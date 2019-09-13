@@ -35,8 +35,8 @@ export type Channel = {
 
 export type ChannelMember = {
   __typename?: 'ChannelMember',
-  userId: Scalars['Float'],
-  channelId: Scalars['Float'],
+  userId: Scalars['String'],
+  channelId: Scalars['String'],
   user: User,
   channel: Channel,
 };
@@ -44,7 +44,7 @@ export type ChannelMember = {
 export type CreateChannelInput = {
   name: Scalars['String'],
   isPublic: Scalars['Boolean'],
-  teamId: Scalars['Float'],
+  teamId: Scalars['String'],
   members?: Maybe<Array<Scalars['String']>>,
 };
 
@@ -52,7 +52,7 @@ export type CreateChannelOutput = Error | Channel;
 
 export type CreateMessageInput = {
   text?: Maybe<Scalars['String']>,
-  channelId: Scalars['Float'],
+  channelId: Scalars['String'],
 };
 
 export type CreateTeamOutput = Error | Team;
@@ -89,7 +89,7 @@ export type Message = {
 export type Mutation = {
   __typename?: 'Mutation',
   createChannel: Array<CreateChannelOutput>,
-  getOrCreateDMChannel: Scalars['Int'],
+  getOrCreateDMChannel: Array<CreateChannelOutput>,
   createDirectMessage: Scalars['Boolean'],
   createMessage: Scalars['Boolean'],
   addTeamMember?: Maybe<Error>,
@@ -109,7 +109,7 @@ export type MutationCreateChannelArgs = {
 
 
 export type MutationGetOrCreateDmChannelArgs = {
-  members: Array<Scalars['String']>,
+  member: Scalars['String'],
   teamId: Scalars['String']
 };
 
@@ -128,7 +128,7 @@ export type MutationCreateMessageArgs = {
 
 
 export type MutationAddTeamMemberArgs = {
-  teamId: Scalars['Float'],
+  teamId: Scalars['String'],
   email: Scalars['String']
 };
 
@@ -187,17 +187,17 @@ export type QueryAllDirectMessagesArgs = {
 
 export type QueryAllMessagesArgs = {
   offset: Scalars['Float'],
-  channelId: Scalars['Float']
+  channelId: Scalars['String']
 };
 
 
 export type QueryGetAllTeamMembersArgs = {
-  teamId: Scalars['Float']
+  teamId: Scalars['String']
 };
 
 
 export type QueryGetUserByIdArgs = {
-  userId: Scalars['Float']
+  userId: Scalars['String']
 };
 
 export type RegisterInput = {
@@ -220,7 +220,7 @@ export type SubscriptionNewDirectMessageArgs = {
 
 
 export type SubscriptionNewMessageArgs = {
-  channelId: Scalars['Float']
+  channelId: Scalars['String']
 };
 
 export type Team = {
@@ -235,8 +235,8 @@ export type Team = {
 export type TeamMember = {
   __typename?: 'TeamMember',
   isOwner: Scalars['Boolean'],
-  userId: Scalars['Float'],
-  teamId: Scalars['Float'],
+  userId: Scalars['String'],
+  teamId: Scalars['String'],
   user: User,
   team: Team,
 };
@@ -251,7 +251,7 @@ export type User = {
 export type CreateChannelMutationMutationVariables = {
   name: Scalars['String'],
   isPublic: Scalars['Boolean'],
-  teamId: Scalars['Float'],
+  teamId: Scalars['String'],
   members?: Maybe<Array<Scalars['String']>>
 };
 
@@ -263,19 +263,25 @@ export type CreateChannelMutationMutation = (
     & Pick<Error, 'path' | 'message'>
   ) | (
     { __typename?: 'Channel' }
-    & Pick<Channel, 'id' | 'name'>
+    & Pick<Channel, 'id' | 'name' | 'dmChannel'>
   )> }
 );
 
 export type GetOrCreateDmChannelMutationMutationVariables = {
   teamId: Scalars['String'],
-  members: Array<Scalars['String']>
+  member: Scalars['String']
 };
 
 
 export type GetOrCreateDmChannelMutationMutation = (
   { __typename?: 'Mutation' }
-  & Pick<Mutation, 'getOrCreateDMChannel'>
+  & { getOrCreateDMChannel: Array<(
+    { __typename?: 'Error' }
+    & Pick<Error, 'path' | 'message'>
+  ) | (
+    { __typename?: 'Channel' }
+    & Pick<Channel, 'id' | 'name' | 'dmChannel'>
+  )> }
 );
 
 export type CreateDirectMessageMutationMutationVariables = {
@@ -328,7 +334,7 @@ export type NewDirectMessageSubscriptionSubscription = (
 
 export type CreateMessageMutationMutationVariables = {
   text?: Maybe<Scalars['String']>,
-  channelId: Scalars['Float'],
+  channelId: Scalars['String'],
   file?: Maybe<Scalars['Upload']>
 };
 
@@ -339,7 +345,7 @@ export type CreateMessageMutationMutation = (
 );
 
 export type AllMessagesQueryQueryVariables = {
-  channelId: Scalars['Float'],
+  channelId: Scalars['String'],
   offset: Scalars['Float']
 };
 
@@ -357,7 +363,7 @@ export type AllMessagesQueryQuery = (
 );
 
 export type NewMessageSubscriptionSubscriptionVariables = {
-  channelId: Scalars['Float']
+  channelId: Scalars['String']
 };
 
 
@@ -374,7 +380,7 @@ export type NewMessageSubscriptionSubscription = (
 );
 
 export type AddTeamMemberMutatioMutationVariables = {
-  teamId: Scalars['Float'],
+  teamId: Scalars['String'],
   email: Scalars['String']
 };
 
@@ -426,7 +432,7 @@ export type TeamsQueryQuery = (
 );
 
 export type GetAllTeamMembersQueryQueryVariables = {
-  teamId: Scalars['Float']
+  teamId: Scalars['String']
 };
 
 
@@ -468,7 +474,7 @@ export type RegisterMutationMutation = (
 );
 
 export type GetUserByIdQueryQueryVariables = {
-  userId: Scalars['Float']
+  userId: Scalars['String']
 };
 
 
@@ -492,7 +498,7 @@ export type MeQueryQuery = (
 );
 
 export const CreateChannelMutationDocument = gql`
-    mutation CreateChannelMutation($name: String!, $isPublic: Boolean!, $teamId: Float!, $members: [String!]) {
+    mutation CreateChannelMutation($name: String!, $isPublic: Boolean!, $teamId: String!, $members: [String!]) {
   createChannel(data: {name: $name, isPublic: $isPublic, teamId: $teamId, members: $members}) {
     ... on Error {
       path
@@ -501,6 +507,7 @@ export const CreateChannelMutationDocument = gql`
     ... on Channel {
       id
       name
+      dmChannel
     }
   }
 }
@@ -526,8 +533,18 @@ export function withCreateChannelMutation<TProps, TChildProps = {}>(operationOpt
 export type CreateChannelMutationMutationResult = ApolloReactCommon.MutationResult<CreateChannelMutationMutation>;
 export type CreateChannelMutationMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateChannelMutationMutation, CreateChannelMutationMutationVariables>;
 export const GetOrCreateDmChannelMutationDocument = gql`
-    mutation GetOrCreateDMChannelMutation($teamId: String!, $members: [String!]!) {
-  getOrCreateDMChannel(teamId: $teamId, members: $members)
+    mutation GetOrCreateDMChannelMutation($teamId: String!, $member: String!) {
+  getOrCreateDMChannel(teamId: $teamId, member: $member) {
+    ... on Error {
+      path
+      message
+    }
+    ... on Channel {
+      id
+      name
+      dmChannel
+    }
+  }
 }
     `;
 export type GetOrCreateDmChannelMutationMutationFn = ApolloReactCommon.MutationFunction<GetOrCreateDmChannelMutationMutation, GetOrCreateDmChannelMutationMutationVariables>;
@@ -636,7 +653,7 @@ export function withNewDirectMessageSubscription<TProps, TChildProps = {}>(opera
 };
 export type NewDirectMessageSubscriptionSubscriptionResult = ApolloReactCommon.SubscriptionResult<NewDirectMessageSubscriptionSubscription>;
 export const CreateMessageMutationDocument = gql`
-    mutation CreateMessageMutation($text: String, $channelId: Float!, $file: Upload) {
+    mutation CreateMessageMutation($text: String, $channelId: String!, $file: Upload) {
   createMessage(data: {text: $text, channelId: $channelId}, file: $file)
 }
     `;
@@ -661,7 +678,7 @@ export function withCreateMessageMutation<TProps, TChildProps = {}>(operationOpt
 export type CreateMessageMutationMutationResult = ApolloReactCommon.MutationResult<CreateMessageMutationMutation>;
 export type CreateMessageMutationMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateMessageMutationMutation, CreateMessageMutationMutationVariables>;
 export const AllMessagesQueryDocument = gql`
-    query AllMessagesQuery($channelId: Float!, $offset: Float!) {
+    query AllMessagesQuery($channelId: String!, $offset: Float!) {
   allMessages(channelId: $channelId, offset: $offset) {
     id
     text
@@ -694,7 +711,7 @@ export function withAllMessagesQuery<TProps, TChildProps = {}>(operationOptions?
 };
 export type AllMessagesQueryQueryResult = ApolloReactCommon.QueryResult<AllMessagesQueryQuery, AllMessagesQueryQueryVariables>;
 export const NewMessageSubscriptionDocument = gql`
-    subscription NewMessageSubscription($channelId: Float!) {
+    subscription NewMessageSubscription($channelId: String!) {
   newMessage(channelId: $channelId) {
     id
     text
@@ -727,7 +744,7 @@ export function withNewMessageSubscription<TProps, TChildProps = {}>(operationOp
 };
 export type NewMessageSubscriptionSubscriptionResult = ApolloReactCommon.SubscriptionResult<NewMessageSubscriptionSubscription>;
 export const AddTeamMemberMutatioDocument = gql`
-    mutation AddTeamMemberMutatio($teamId: Float!, $email: String!) {
+    mutation AddTeamMemberMutatio($teamId: String!, $email: String!) {
   addTeamMember(teamId: $teamId, email: $email) {
     path
     message
@@ -828,7 +845,7 @@ export function withTeamsQuery<TProps, TChildProps = {}>(operationOptions?: Apol
 };
 export type TeamsQueryQueryResult = ApolloReactCommon.QueryResult<TeamsQueryQuery, TeamsQueryQueryVariables>;
 export const GetAllTeamMembersQueryDocument = gql`
-    query GetAllTeamMembersQuery($teamId: Float!) {
+    query GetAllTeamMembersQuery($teamId: String!) {
   getAllTeamMembers(teamId: $teamId) {
     username
     email
@@ -911,7 +928,7 @@ export function withRegisterMutation<TProps, TChildProps = {}>(operationOptions?
 export type RegisterMutationMutationResult = ApolloReactCommon.MutationResult<RegisterMutationMutation>;
 export type RegisterMutationMutationOptions = ApolloReactCommon.BaseMutationOptions<RegisterMutationMutation, RegisterMutationMutationVariables>;
 export const GetUserByIdQueryDocument = gql`
-    query GetUserByIdQuery($userId: Float!) {
+    query GetUserByIdQuery($userId: String!) {
   getUserById(userId: $userId) {
     id
     email

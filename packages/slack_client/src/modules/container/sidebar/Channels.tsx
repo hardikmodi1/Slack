@@ -14,9 +14,9 @@ import {
 
 interface Props {
 	username: string;
-	users: any;
+	dmChannels: Channel[];
 	team: any;
-	channels: Channel[];
+	regularChannels: Channel[];
 	onAddChannelClick: () => void;
 	onAddTeamMemberClick: () => void;
 	onDirectMessageClick: () => void;
@@ -25,8 +25,8 @@ interface Props {
 const Channels: React.FC<Props> = ({
 	username,
 	team,
-	users,
-	channels,
+	dmChannels,
+	regularChannels,
 	onAddChannelClick,
 	onAddTeamMemberClick,
 	onDirectMessageClick
@@ -37,8 +37,8 @@ const Channels: React.FC<Props> = ({
 		</Link>
 	);
 
-	const user = ({ id, username: name }: { id: string; username: string }) => (
-		<Link to={`/view-team/user/${team.id}/${id}`} key={`user-${id}`}>
+	const user = ({ id, name }: { id: string; name: string }) => (
+		<Link to={`/view-team/${team.id}/${id}`} key={`dmChannel-${id}`}>
 			<SideBarListItem>
 				<Bubble me={username === name} /> {name}
 			</SideBarListItem>
@@ -62,7 +62,7 @@ const Channels: React.FC<Props> = ({
 							/>
 						)}
 					</SideBarListHeader>
-					{channels.map(channel)}
+					{regularChannels.map(channel)}
 				</SideBarList>
 			</div>
 			<div>
@@ -74,7 +74,7 @@ const Channels: React.FC<Props> = ({
 							onClick={onDirectMessageClick}
 						/>
 					</SideBarListHeader>
-					{users.map(user)}
+					{dmChannels.map(user)}
 				</SideBarList>
 			</div>
 			{team.isOwner && (

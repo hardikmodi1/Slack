@@ -15,8 +15,8 @@ import { Team } from "./Team";
 @Entity()
 export class Channel extends BaseEntity {
 	@Field(() => ID)
-	@PrimaryGeneratedColumn()
-	id: number;
+	@PrimaryGeneratedColumn("uuid")
+	id: string;
 
 	@Field()
 	@Column("varchar", { length: 255 })
@@ -25,6 +25,9 @@ export class Channel extends BaseEntity {
 	@Field()
 	@Column("boolean", { default: true })
 	public: boolean;
+
+	@Column()
+	teamId: string;
 
 	@Field({ nullable: true })
 	@Column("boolean", { default: false })

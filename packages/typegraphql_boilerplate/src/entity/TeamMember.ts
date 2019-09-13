@@ -19,11 +19,11 @@ export class TeamMember extends BaseEntity {
 
 	@Field()
 	@PrimaryColumn()
-	userId: number;
+	userId: string;
 
 	@Field()
 	@PrimaryColumn()
-	teamId: number;
+	teamId: string;
 
 	@Field(() => User)
 	@ManyToOne(() => User, user => user.member_of_teams, { primary: true })

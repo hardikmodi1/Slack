@@ -10,7 +10,6 @@ import {
 import { FindOneOptions, getConnection } from "typeorm";
 import { Channel } from "../../entity/Channel";
 import { ChannelMember } from "../../entity/ChannelMember";
-import { Team } from "../../entity/Team";
 import { TeamMember } from "../../entity/TeamMember";
 import { User } from "../../entity/User";
 import { Context } from "../../types/Context";
@@ -54,16 +53,11 @@ export class CreateChannelResolver {
 			return [ComposeErrorMessage("user", "User does not exist")];
 		}
 
-		const team = await Team.findOne({ where: { id: teamId } });
-		if (!team) {
-			return [ComposeErrorMessage("team", "Team does not exist")];
-		}
-
-		const channel = new Channel();
-		channel.name = name;
-		channel.public = isPublic;
-		channel.team = team;
-		await channel.save();
+		const channel = await Channel.create({
+			name,
+			teamId,
+			public: isPublic
+		}).save();
 		if (!isPublic) {
 			const channelMembers = members.filter(
 				member => member !== ctx.req.session!.userId
@@ -77,7 +71,7 @@ export class CreateChannelResolver {
 					channelMembers.map(member => {
 						return {
 							channelId: channel.id,
-							userId: parseInt(member, 10)
+							userId: member
 						};
 					})
 				)

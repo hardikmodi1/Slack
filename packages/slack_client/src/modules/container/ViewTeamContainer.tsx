@@ -10,7 +10,6 @@ import {
 } from "../../generated/graphqlTypes";
 import { TEAMS_QUERY } from "../graphql/team/query/allTeamsQuery";
 import { ME_QUERY } from "../graphql/user/query/meQuery";
-import DirectMessage from "./content/DirectMessage";
 import ViewTeam from "./ViewTeam";
 
 const ViewTeamContainer: React.FC<RouteComponentProps<{}>> = ({
@@ -33,37 +32,25 @@ const ViewTeamContainer: React.FC<RouteComponentProps<{}>> = ({
 	if (data.teams!.length === 0) {
 		return <Redirect to="/create-team" />;
 	}
-	const currentTeamId: number = parseInt((params as any).teamId, 10);
-	const currentChannelId: number = parseInt((params as any).channelId, 10);
-	const userId: number = parseInt((params as any).userId, 10);
+	const currentTeamId: string = (params as any).teamId;
+	const currentChannelId: string = (params as any).channelId;
+	// const userId: string = (params as any).userId;
 	const allTeams = data.teams!.map(item => {
 		return { ...item.team, isOwner: item.isOwner };
 	});
 	const teamIdx = currentTeamId
-		? findIndex(allTeams, ["id", currentTeamId.toString()])
+		? findIndex(allTeams, ["id", currentTeamId])
 		: 0;
 	const team = teamIdx === -1 ? allTeams[0] : allTeams[teamIdx];
 	return (
 		<div>
-			{userId ? (
-				userId && (
-					<DirectMessage
-						userId={userId}
-						team={team}
-						allTeams={allTeams}
-						username={meData.me!.username}
-						teamIdx={teamIdx === -1 ? 0 : teamIdx}
-					/>
-				)
-			) : (
-				<ViewTeam
-					currentChannelId={currentChannelId}
-					team={team}
-					allTeams={allTeams}
-					username={meData.me!.username}
-					teamIdx={teamIdx}
-				/>
-			)}
+			<ViewTeam
+				currentChannelId={currentChannelId}
+				team={team}
+				allTeams={allTeams}
+				username={meData.me!.username}
+				teamIdx={teamIdx}
+			/>
 		</div>
 	);
 };

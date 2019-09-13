@@ -15,8 +15,8 @@ import { User } from "./User";
 @Entity()
 export class Team extends BaseEntity {
 	@Field(() => ID)
-	@PrimaryGeneratedColumn()
-	id: number;
+	@PrimaryGeneratedColumn("uuid")
+	id: string;
 
 	@Field()
 	@Column("varchar", { length: 255, unique: true })
