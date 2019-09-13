@@ -7,11 +7,6 @@ export const TEAMS_QUERY = gql`
 			team {
 				id
 				name
-				directMessageUsers {
-					id
-					email
-					username
-				}
 				channels {
 					id
 					name

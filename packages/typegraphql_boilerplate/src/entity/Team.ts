@@ -7,9 +7,7 @@ import {
 	PrimaryGeneratedColumn
 } from "typeorm";
 import { Channel } from "./Channel";
-import { DirectMessage } from "./DirectMessage";
 import { TeamMember } from "./TeamMember";
-import { User } from "./User";
 
 @ObjectType()
 @Entity()
@@ -26,13 +24,7 @@ export class Team extends BaseEntity {
 	@OneToMany(() => TeamMember, teamMember => teamMember.team)
 	members: TeamMember[];
 
-	@Field(() => [User])
-	directMessageUsers: User[];
-
 	@Field(() => [Channel])
 	@OneToMany(() => Channel, channel => channel.team)
 	channels: Channel[];
-
-	@OneToMany(() => DirectMessage, directMessage => directMessage.team)
-	directMessages: DirectMessage[];
 }

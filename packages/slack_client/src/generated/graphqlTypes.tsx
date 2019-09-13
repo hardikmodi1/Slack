@@ -58,16 +58,6 @@ export type CreateMessageInput = {
 export type CreateTeamOutput = Error | Team;
 
 
-export type DirectMessage = {
-  __typename?: 'DirectMessage',
-  id: Scalars['ID'],
-  text: Scalars['String'],
-  sender: User,
-  team: User,
-  receiver: User,
-  time?: Maybe<Scalars['DateTime']>,
-};
-
 export type Error = {
   __typename?: 'Error',
   path?: Maybe<Scalars['String']>,
@@ -90,7 +80,6 @@ export type Mutation = {
   __typename?: 'Mutation',
   createChannel: Array<CreateChannelOutput>,
   getOrCreateDMChannel: Array<CreateChannelOutput>,
-  createDirectMessage: Scalars['Boolean'],
   createMessage: Scalars['Boolean'],
   addTeamMember?: Maybe<Error>,
   createTeam?: Maybe<Array<CreateTeamOutput>>,
@@ -111,13 +100,6 @@ export type MutationCreateChannelArgs = {
 export type MutationGetOrCreateDmChannelArgs = {
   member: Scalars['String'],
   teamId: Scalars['String']
-};
-
-
-export type MutationCreateDirectMessageArgs = {
-  text: Scalars['String'],
-  teamId: Scalars['Float'],
-  receiverId: Scalars['Float']
 };
 
 
@@ -169,19 +151,12 @@ export type PasswordInput = {
 
 export type Query = {
   __typename?: 'Query',
-  allDirectMessages: Array<DirectMessage>,
   allMessages: Array<Message>,
   teams?: Maybe<Array<TeamMember>>,
   getAllTeamMembers: Array<User>,
   getUserById?: Maybe<User>,
   me?: Maybe<User>,
   hello: Scalars['String'],
-};
-
-
-export type QueryAllDirectMessagesArgs = {
-  otherUserId: Scalars['Float'],
-  teamId: Scalars['Float']
 };
 
 
@@ -208,14 +183,7 @@ export type RegisterInput = {
 
 export type Subscription = {
   __typename?: 'Subscription',
-  newDirectMessage: DirectMessage,
   newMessage: Message,
-};
-
-
-export type SubscriptionNewDirectMessageArgs = {
-  teamId: Scalars['Float'],
-  userId: Scalars['Float']
 };
 
 
@@ -228,7 +196,6 @@ export type Team = {
   id: Scalars['ID'],
   name: Scalars['String'],
   members: Array<TeamMember>,
-  directMessageUsers: Array<User>,
   channels: Array<Channel>,
 };
 
@@ -282,54 +249,6 @@ export type GetOrCreateDmChannelMutationMutation = (
     { __typename?: 'Channel' }
     & Pick<Channel, 'id' | 'name' | 'dmChannel'>
   )> }
-);
-
-export type CreateDirectMessageMutationMutationVariables = {
-  text: Scalars['String'],
-  receiverId: Scalars['Float'],
-  teamId: Scalars['Float']
-};
-
-
-export type CreateDirectMessageMutationMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Mutation, 'createDirectMessage'>
-);
-
-export type AllDirectMessagesQueryQueryVariables = {
-  otherUserId: Scalars['Float'],
-  teamId: Scalars['Float']
-};
-
-
-export type AllDirectMessagesQueryQuery = (
-  { __typename?: 'Query' }
-  & { allDirectMessages: Array<(
-    { __typename?: 'DirectMessage' }
-    & Pick<DirectMessage, 'id' | 'text' | 'time'>
-    & { sender: (
-      { __typename?: 'User' }
-      & Pick<User, 'username'>
-    ) }
-  )> }
-);
-
-export type NewDirectMessageSubscriptionSubscriptionVariables = {
-  userId: Scalars['Float'],
-  teamId: Scalars['Float']
-};
-
-
-export type NewDirectMessageSubscriptionSubscription = (
-  { __typename?: 'Subscription' }
-  & { newDirectMessage: (
-    { __typename?: 'DirectMessage' }
-    & Pick<DirectMessage, 'id' | 'text' | 'time'>
-    & { sender: (
-      { __typename?: 'User' }
-      & Pick<User, 'username'>
-    ) }
-  ) }
 );
 
 export type CreateMessageMutationMutationVariables = {
@@ -420,10 +339,7 @@ export type TeamsQueryQuery = (
     & { team: (
       { __typename?: 'Team' }
       & Pick<Team, 'id' | 'name'>
-      & { directMessageUsers: Array<(
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'email' | 'username'>
-      )>, channels: Array<(
+      & { channels: Array<(
         { __typename?: 'Channel' }
         & Pick<Channel, 'id' | 'name' | 'dmChannel'>
       )> }
@@ -567,91 +483,6 @@ export function withGetOrCreateDmChannelMutation<TProps, TChildProps = {}>(opera
 };
 export type GetOrCreateDmChannelMutationMutationResult = ApolloReactCommon.MutationResult<GetOrCreateDmChannelMutationMutation>;
 export type GetOrCreateDmChannelMutationMutationOptions = ApolloReactCommon.BaseMutationOptions<GetOrCreateDmChannelMutationMutation, GetOrCreateDmChannelMutationMutationVariables>;
-export const CreateDirectMessageMutationDocument = gql`
-    mutation CreateDirectMessageMutation($text: String!, $receiverId: Float!, $teamId: Float!) {
-  createDirectMessage(text: $text, receiverId: $receiverId, teamId: $teamId)
-}
-    `;
-export type CreateDirectMessageMutationMutationFn = ApolloReactCommon.MutationFunction<CreateDirectMessageMutationMutation, CreateDirectMessageMutationMutationVariables>;
-export type CreateDirectMessageMutationComponentProps = Omit<ApolloReactComponents.MutationComponentOptions<CreateDirectMessageMutationMutation, CreateDirectMessageMutationMutationVariables>, 'mutation'>;
-
-    export const CreateDirectMessageMutationComponent = (props: CreateDirectMessageMutationComponentProps) => (
-      <ApolloReactComponents.Mutation<CreateDirectMessageMutationMutation, CreateDirectMessageMutationMutationVariables> mutation={CreateDirectMessageMutationDocument} {...props} />
-    );
-    
-export type CreateDirectMessageMutationProps<TChildProps = {}> = ApolloReactHoc.MutateProps<CreateDirectMessageMutationMutation, CreateDirectMessageMutationMutationVariables> & TChildProps;
-export function withCreateDirectMessageMutation<TProps, TChildProps = {}>(operationOptions?: ApolloReactHoc.OperationOption<
-  TProps,
-  CreateDirectMessageMutationMutation,
-  CreateDirectMessageMutationMutationVariables,
-  CreateDirectMessageMutationProps<TChildProps>>) {
-    return ApolloReactHoc.withMutation<TProps, CreateDirectMessageMutationMutation, CreateDirectMessageMutationMutationVariables, CreateDirectMessageMutationProps<TChildProps>>(CreateDirectMessageMutationDocument, {
-      alias: 'withCreateDirectMessageMutation',
-      ...operationOptions
-    });
-};
-export type CreateDirectMessageMutationMutationResult = ApolloReactCommon.MutationResult<CreateDirectMessageMutationMutation>;
-export type CreateDirectMessageMutationMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateDirectMessageMutationMutation, CreateDirectMessageMutationMutationVariables>;
-export const AllDirectMessagesQueryDocument = gql`
-    query AllDirectMessagesQuery($otherUserId: Float!, $teamId: Float!) {
-  allDirectMessages(otherUserId: $otherUserId, teamId: $teamId) {
-    id
-    text
-    time
-    sender {
-      username
-    }
-  }
-}
-    `;
-export type AllDirectMessagesQueryComponentProps = Omit<ApolloReactComponents.QueryComponentOptions<AllDirectMessagesQueryQuery, AllDirectMessagesQueryQueryVariables>, 'query'> & ({ variables: AllDirectMessagesQueryQueryVariables; skip?: boolean; } | { skip: boolean; });
-
-    export const AllDirectMessagesQueryComponent = (props: AllDirectMessagesQueryComponentProps) => (
-      <ApolloReactComponents.Query<AllDirectMessagesQueryQuery, AllDirectMessagesQueryQueryVariables> query={AllDirectMessagesQueryDocument} {...props} />
-    );
-    
-export type AllDirectMessagesQueryProps<TChildProps = {}> = ApolloReactHoc.DataProps<AllDirectMessagesQueryQuery, AllDirectMessagesQueryQueryVariables> & TChildProps;
-export function withAllDirectMessagesQuery<TProps, TChildProps = {}>(operationOptions?: ApolloReactHoc.OperationOption<
-  TProps,
-  AllDirectMessagesQueryQuery,
-  AllDirectMessagesQueryQueryVariables,
-  AllDirectMessagesQueryProps<TChildProps>>) {
-    return ApolloReactHoc.withQuery<TProps, AllDirectMessagesQueryQuery, AllDirectMessagesQueryQueryVariables, AllDirectMessagesQueryProps<TChildProps>>(AllDirectMessagesQueryDocument, {
-      alias: 'withAllDirectMessagesQuery',
-      ...operationOptions
-    });
-};
-export type AllDirectMessagesQueryQueryResult = ApolloReactCommon.QueryResult<AllDirectMessagesQueryQuery, AllDirectMessagesQueryQueryVariables>;
-export const NewDirectMessageSubscriptionDocument = gql`
-    subscription NewDirectMessageSubscription($userId: Float!, $teamId: Float!) {
-  newDirectMessage(userId: $userId, teamId: $teamId) {
-    id
-    text
-    time
-    sender {
-      username
-    }
-  }
-}
-    `;
-export type NewDirectMessageSubscriptionComponentProps = Omit<ApolloReactComponents.SubscriptionComponentOptions<NewDirectMessageSubscriptionSubscription, NewDirectMessageSubscriptionSubscriptionVariables>, 'subscription'>;
-
-    export const NewDirectMessageSubscriptionComponent = (props: NewDirectMessageSubscriptionComponentProps) => (
-      <ApolloReactComponents.Subscription<NewDirectMessageSubscriptionSubscription, NewDirectMessageSubscriptionSubscriptionVariables> subscription={NewDirectMessageSubscriptionDocument} {...props} />
-    );
-    
-export type NewDirectMessageSubscriptionProps<TChildProps = {}> = ApolloReactHoc.DataProps<NewDirectMessageSubscriptionSubscription, NewDirectMessageSubscriptionSubscriptionVariables> & TChildProps;
-export function withNewDirectMessageSubscription<TProps, TChildProps = {}>(operationOptions?: ApolloReactHoc.OperationOption<
-  TProps,
-  NewDirectMessageSubscriptionSubscription,
-  NewDirectMessageSubscriptionSubscriptionVariables,
-  NewDirectMessageSubscriptionProps<TChildProps>>) {
-    return ApolloReactHoc.withSubscription<TProps, NewDirectMessageSubscriptionSubscription, NewDirectMessageSubscriptionSubscriptionVariables, NewDirectMessageSubscriptionProps<TChildProps>>(NewDirectMessageSubscriptionDocument, {
-      alias: 'withNewDirectMessageSubscription',
-      ...operationOptions
-    });
-};
-export type NewDirectMessageSubscriptionSubscriptionResult = ApolloReactCommon.SubscriptionResult<NewDirectMessageSubscriptionSubscription>;
 export const CreateMessageMutationDocument = gql`
     mutation CreateMessageMutation($text: String, $channelId: String!, $file: Upload) {
   createMessage(data: {text: $text, channelId: $channelId}, file: $file)
@@ -812,11 +643,6 @@ export const TeamsQueryDocument = gql`
     team {
       id
       name
-      directMessageUsers {
-        id
-        email
-        username
-      }
       channels {
         id
         name

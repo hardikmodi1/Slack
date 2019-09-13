@@ -20,19 +20,6 @@ export class AllTeamsResolver {
 	}
 
 	@FieldResolver()
-	async directMessageUsers(@Root() parent: Team, @Ctx() ctx: Context) {
-		const directMessagesMembers = await getConnection().query(
-			`select distinct u.email,u.username,u.id from public.user as u join public.direct_message as me on u.id=me."senderId" or u.id=me."receiverId" where (me."receiverId"='${
-				ctx.req.session!.userId
-			}' or me."senderId"='${
-				ctx.req.session!.userId
-			}') and me."teamId"='${parent.id}'`
-		);
-		console.log(directMessagesMembers);
-		return directMessagesMembers;
-	}
-
-	@FieldResolver()
 	async members(@Root() parent: Team) {
 		const teamMembers: TeamMember[] | undefined = await TeamMember.find({
 			where: { teamId: parent.id },

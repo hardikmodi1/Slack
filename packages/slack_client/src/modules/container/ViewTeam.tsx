@@ -2,6 +2,7 @@ import findIndex from "lodash/findIndex";
 import * as React from "react";
 import { useMutation } from "react-apollo";
 import {
+	Channel,
 	CreateMessageMutationMutation,
 	CreateMessageMutationMutationVariables
 } from "../../generated/graphqlTypes";
@@ -9,6 +10,7 @@ import { CREATE_MESSAGE_MUTATION } from "../graphql/message/mutation/createMessa
 import Header from "./content/Header";
 import MessageContainer from "./content/MessageContainer";
 import SendMessage from "./content/SendMessage";
+import findDisplayName from "./shared/findDisplayName";
 import Sidebar from "./sidebar/Sidebar";
 import Container from "./styled-components/Container";
 
@@ -35,7 +37,7 @@ const ViewTeam: React.FC<Props> = ({
 	const channelIdx = currentChannelId
 		? findIndex(team.channels, ["id", currentChannelId])
 		: 0;
-	const channel =
+	const channel: Channel =
 		channelIdx === -1 ? team.channels[0] : team.channels[channelIdx];
 
 	async function sendMessageSubmit(text: string) {
@@ -52,13 +54,25 @@ const ViewTeam: React.FC<Props> = ({
 				teamIdx={teamIdx}
 				username={username}
 			/>
-			{channel && <Header channelName={channel.name} />}
+			{channel && (
+				<Header
+					channelName={
+						channel.dmChannel
+							? findDisplayName(channel.name, username)
+							: channel.name
+					}
+				/>
+			)}
 			{channel && <MessageContainer channelId={channel.id} />}
 			{channel && (
 				<SendMessage
 					submit={sendMessageSubmit}
 					channelId={channel.id}
-					channelName={channel.name}
+					channelName={
+						channel.dmChannel
+							? findDisplayName(channel.name, username)
+							: channel.name
+					}
 				/>
 			)}
 		</Container>

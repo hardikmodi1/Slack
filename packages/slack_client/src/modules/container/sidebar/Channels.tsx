@@ -2,6 +2,7 @@ import { Icon } from "antd";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { Channel } from "../../../generated/graphqlTypes";
+import findDisplayName from "../shared/findDisplayName";
 import {
 	Bubble,
 	ChannelWrapper,
@@ -40,7 +41,8 @@ const Channels: React.FC<Props> = ({
 	const user = ({ id, name }: { id: string; name: string }) => (
 		<Link to={`/view-team/${team.id}/${id}`} key={`dmChannel-${id}`}>
 			<SideBarListItem>
-				<Bubble me={username === name} /> {name}
+				<Bubble me={username === name} />{" "}
+				{findDisplayName(name, username)}
 			</SideBarListItem>
 		</Link>
 	);
