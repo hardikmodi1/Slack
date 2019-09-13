@@ -5,7 +5,7 @@ import { User } from "../../entity/User";
 export class GetUserByIdResolver {
 	@Query(() => User, { nullable: true })
 	async getUserById(
-		@Arg("userId") userId: number
+		@Arg("userId") userId: string
 	): Promise<User | undefined> {
 		return User.findOne({ where: { id: userId } });
 	}

@@ -6,5 +6,5 @@ export class CreateMessageInput {
 	text: string;
 
 	@Field()
-	channelId: number;
+	channelId: string;
 }

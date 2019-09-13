@@ -12,7 +12,7 @@ interface FormValues {
 interface Props {
 	submit: (text: string) => Promise<void>;
 	channelName: string;
-	channelId: number;
+	channelId: string;
 }
 
 const C: React.FC<FormikProps<FormValues> & Props> = ({

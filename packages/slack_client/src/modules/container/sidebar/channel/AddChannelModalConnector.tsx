@@ -37,7 +37,7 @@ const AddChannelModalConnector: React.FC<Props> = ({
 		members: string[]
 	): Promise<NormalizedErrorMap | null> {
 		const { data: createChannelData } = await createChannel({
-			variables: { name, isPublic, teamId: parseFloat(teamId), members },
+			variables: { name, isPublic, teamId, members },
 			update(cache: DataProxy, { data: mutationResult }) {
 				const cacheData = cache.readQuery({ query: TEAMS_QUERY });
 				if (
@@ -54,16 +54,6 @@ const AddChannelModalConnector: React.FC<Props> = ({
 				} else {
 					return;
 				}
-			},
-			optimisticResponse: {
-				__typename: "Mutation",
-				createChannel: [
-					{
-						__typename: "Channel",
-						id: "-1",
-						name
-					}
-				]
 			}
 		});
 		const createChannelResponse = createChannelData!.createChannel[0];

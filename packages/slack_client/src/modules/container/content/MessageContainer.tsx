@@ -13,7 +13,7 @@ import AttachFile from "./AttachFile";
 import DisplayMessae from "./messageContainer/DisplayMessage";
 
 interface Props {
-	channelId: number;
+	channelId: string;
 }
 
 const MessageContainer: React.FC<Props> = ({ channelId }) => {
@@ -33,7 +33,7 @@ const MessageContainer: React.FC<Props> = ({ channelId }) => {
 		>({
 			document: NEW_MEESSAGE_SUBSCRIPTION,
 			variables: { channelId },
-			updateQuery: (prev, { subscriptionData }) => {
+			updateQuery: (prev: any, { subscriptionData }) => {
 				if (!subscriptionData.data) {
 					return prev;
 				}

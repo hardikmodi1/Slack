@@ -21,11 +21,6 @@ const Routes = () => (
 			<AuthRoute exact={true} path="/" component={ViewTeam} />
 			<AuthRoute
 				exact={true}
-				path="/view-team/user/:teamId/:userId"
-				component={ViewTeamContainer}
-			/>
-			<AuthRoute
-				exact={true}
 				path="/view-team/:teamId?/:channelId?"
 				component={ViewTeamContainer}
 			/>

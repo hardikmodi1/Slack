@@ -1,13 +1,20 @@
 import { Input, List, Modal } from "antd";
+import { DataProxy } from "apollo-cache";
 import Downshift from "downshift";
+import findIndex from "lodash/findIndex";
 import * as React from "react";
-import { useQuery } from "react-apollo";
+import { useMutation, useQuery } from "react-apollo";
 import { Link, RouteComponentProps, withRouter } from "react-router-dom";
 import {
+	Channel,
 	GetAllTeamMembersQueryQuery,
-	GetAllTeamMembersQueryQueryVariables
+	GetAllTeamMembersQueryQueryVariables,
+	GetOrCreateDmChannelMutationMutation,
+	GetOrCreateDmChannelMutationMutationVariables
 } from "src/generated/graphqlTypes";
-import { GET_ALL_TEAM_MEMBERS_QUERY } from "src/modules/graphql/team/query/getAllTeamMembers";
+import { GET_OR_CREATE_DM_CHANNEL_MUTATION } from "src/modules/graphql/channel/mutation/getOrCreateDMChannel";
+import { TEAMS_QUERY } from "../../../graphql/team/query/allTeamsQuery";
+import { GET_ALL_TEAM_MEMBERS_QUERY } from "../../../graphql/team/query/getAllTeamMembers";
 
 interface Props {
 	open: boolean;
@@ -28,10 +35,14 @@ const DirectMessageModal: React.FC<Props & RouteComponentProps<{}>> = ({
 		GetAllTeamMembersQueryQueryVariables
 	>(GET_ALL_TEAM_MEMBERS_QUERY, {
 		variables: {
-			teamId: parseInt(teamId, 10)
+			teamId
 		}
 	});
 	// const client = useApolloClient();
+	const [getOrCreateDmChannel] = useMutation<
+		GetOrCreateDmChannelMutationMutation,
+		GetOrCreateDmChannelMutationMutationVariables
+	>(GET_OR_CREATE_DM_CHANNEL_MUTATION);
 	return (
 		<Modal
 			title="Direct Message"
@@ -41,14 +52,53 @@ const DirectMessageModal: React.FC<Props & RouteComponentProps<{}>> = ({
 			footer={[]}
 		>
 			<Downshift
-				onChange={selectedUser => {
+				onChange={async selectedUser => {
 					if (!selectedUser) {
 						return;
 					}
-					history.push(
-						`/view-team/user/${teamId}/${selectedUser.id}`
-					);
-					handleCancel();
+					const { data: response } = await getOrCreateDmChannel({
+						variables: {
+							teamId,
+							member: selectedUser.id
+						},
+						update(cache: DataProxy, { data: mutationResult }) {
+							const cacheData: any = cache.readQuery({
+								query: TEAMS_QUERY
+							});
+							if (
+								mutationResult &&
+								(mutationResult as any).getOrCreateDMChannel[0]
+									.id
+							) {
+								const channel: Channel = (mutationResult! as any)
+									.getOrCreateDMChannel[0];
+								const index = findIndex(
+									cacheData.teams[teamIdx].team.channels,
+									["id", channel.id]
+								);
+								if (index === -1) {
+									cache.writeQuery({
+										query: TEAMS_QUERY,
+										data: (cacheData as any).teams[
+											teamIdx
+										].team.channels.push(channel)
+									});
+								}
+							} else {
+								return;
+							}
+						}
+					});
+					if (
+						response &&
+						response.getOrCreateDMChannel[0].__typename ===
+							"Channel"
+					) {
+						history.push(
+							`/view-team/${teamId}/${response.getOrCreateDMChannel[0].id}`
+						);
+						handleCancel();
+					}
 				}}
 				itemToString={item => (item ? item.value : "")}
 			>

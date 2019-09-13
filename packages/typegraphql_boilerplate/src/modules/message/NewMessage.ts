@@ -14,7 +14,7 @@ export class NewMessageResolver {
 	})
 	newMessage(
 		@Root() MessagePayload: Message,
-		@Arg("channelId") channelId: number
+		@Arg("channelId") channelId: string
 	): Message {
 		console.log(channelId);
 		return MessagePayload;

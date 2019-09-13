@@ -25,7 +25,7 @@ const SelectChannelMembers: React.FC<Props> = ({
 		GetAllTeamMembersQueryQueryVariables
 	>(GET_ALL_TEAM_MEMBERS_QUERY, {
 		variables: {
-			teamId: parseInt(teamId, 10)
+			teamId
 		}
 	});
 

@@ -4,7 +4,7 @@ export const CREATE_CHANNEL_MUTATION = gql`
 	mutation CreateChannelMutation(
 		$name: String!
 		$isPublic: Boolean!
-		$teamId: Float!
+		$teamId: String!
 		$members: [String!]
 	) {
 		createChannel(
@@ -22,6 +22,7 @@ export const CREATE_CHANNEL_MUTATION = gql`
 			... on Channel {
 				id
 				name
+				dmChannel
 			}
 		}
 	}

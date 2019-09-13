@@ -13,15 +13,15 @@ import { User } from "./User";
 @Entity()
 export class Message extends BaseEntity {
 	@Field(() => ID)
-	@PrimaryGeneratedColumn()
-	id: number;
+	@PrimaryGeneratedColumn("uuid")
+	id: string;
 
 	@Field({ nullable: true })
 	@Column("text", { nullable: true })
 	text: string;
 
 	@Column({ nullable: true })
-	channelId: number;
+	channelId: string;
 
 	@Field({ nullable: true })
 	@Column("text", { nullable: true })
@@ -32,7 +32,7 @@ export class Message extends BaseEntity {
 	type: string;
 
 	@Column({ nullable: true })
-	userId: number;
+	userId: string;
 
 	@Field({ nullable: true })
 	originalName: string;

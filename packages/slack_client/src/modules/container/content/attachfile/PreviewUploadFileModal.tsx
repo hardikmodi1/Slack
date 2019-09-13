@@ -13,7 +13,7 @@ import FileWrapper from "./FileWrapper";
 interface Props {
 	// submit: (name: string) => Promise<NormalizedErrorMap | null>;
 	// loading: boolean;
-	channelId: number;
+	channelId: string;
 	open: boolean;
 	handleCancel: () => void;
 	files: any[];
@@ -34,6 +34,7 @@ const PreviewUploadFileModal: React.FC<Props> = ({
 		await createMessage({
 			variables: { channelId, file: files[0] }
 		});
+		handleCancel();
 	}
 	return (
 		<Modal

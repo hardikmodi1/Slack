@@ -13,7 +13,7 @@ import Sidebar from "./sidebar/Sidebar";
 import Container from "./styled-components/Container";
 
 export interface Props {
-	currentChannelId: number;
+	currentChannelId: string;
 	team: any;
 	allTeams: any;
 	username: string;
@@ -33,14 +33,14 @@ const ViewTeam: React.FC<Props> = ({
 		CreateMessageMutationMutationVariables
 	>(CREATE_MESSAGE_MUTATION);
 	const channelIdx = currentChannelId
-		? findIndex(team.channels, ["id", currentChannelId.toString()])
+		? findIndex(team.channels, ["id", currentChannelId])
 		: 0;
 	const channel =
 		channelIdx === -1 ? team.channels[0] : team.channels[channelIdx];
 
 	async function sendMessageSubmit(text: string) {
 		await createMessage({
-			variables: { text, channelId: parseInt(channel.id, 10) }
+			variables: { text, channelId: channel.id }
 		});
 	}
 
@@ -53,13 +53,11 @@ const ViewTeam: React.FC<Props> = ({
 				username={username}
 			/>
 			{channel && <Header channelName={channel.name} />}
-			{channel && (
-				<MessageContainer channelId={parseInt(channel.id, 10)} />
-			)}
+			{channel && <MessageContainer channelId={channel.id} />}
 			{channel && (
 				<SendMessage
 					submit={sendMessageSubmit}
-					channelId={parseInt(channel.id, 10)}
+					channelId={channel.id}
 					channelName={channel.name}
 				/>
 			)}

@@ -5,7 +5,7 @@ import PreviewUploadFileModal from "./attachfile/PreviewUploadFileModal";
 
 interface Props {
 	disableClick?: boolean;
-	channelId: number;
+	channelId: string;
 	style?: object;
 }
 

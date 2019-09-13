@@ -14,11 +14,11 @@ import { User } from "./User";
 export class ChannelMember extends BaseEntity {
 	@Field()
 	@PrimaryColumn()
-	userId: number;
+	userId: string;
 
 	@Field()
 	@PrimaryColumn()
-	channelId: number;
+	channelId: string;
 
 	@Field(() => User)
 	@ManyToOne(() => User, user => user.member_of_channels, { primary: true })

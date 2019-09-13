@@ -22,11 +22,11 @@ export class AllTeamsResolver {
 	@FieldResolver()
 	async directMessageUsers(@Root() parent: Team, @Ctx() ctx: Context) {
 		const directMessagesMembers = await getConnection().query(
-			`select distinct u.email,u.username,u.id from public.user as u join public.direct_message as me on u.id=me."senderId" or u.id=me."receiverId" where (me."receiverId"=${
+			`select distinct u.email,u.username,u.id from public.user as u join public.direct_message as me on u.id=me."senderId" or u.id=me."receiverId" where (me."receiverId"='${
 				ctx.req.session!.userId
-			} or me."senderId"=${ctx.req.session!.userId}) and me."teamId"=${
-				parent.id
-			}`
+			}' or me."senderId"='${
+				ctx.req.session!.userId
+			}') and me."teamId"='${parent.id}'`
 		);
 		console.log(directMessagesMembers);
 		return directMessagesMembers;
@@ -46,9 +46,9 @@ export class AllTeamsResolver {
 		const channels = await getConnection().query(
 			`select distinct on (ch.id) ch.id,ch.name, ch."dmChannel" from public.channel as ch left outer join channel_member as chm on 
 			ch.id=chm."channelId"
-			where ch."teamId"=${parent.id} and (ch.public=true or (chm."userId"=${
+			where ch."teamId"='${parent.id}' and (ch.public=true or (chm."userId"='${
 				ctx.req.session!.userId
-			})) `
+			}')) `
 		);
 		return channels;
 	}
