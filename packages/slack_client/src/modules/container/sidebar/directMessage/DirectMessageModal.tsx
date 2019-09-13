@@ -21,6 +21,7 @@ interface Props {
 	handleCancel: () => void;
 	teamId: string;
 	teamIdx: number;
+	username: string;
 }
 
 const DirectMessageModal: React.FC<Props & RouteComponentProps<{}>> = ({
@@ -28,7 +29,8 @@ const DirectMessageModal: React.FC<Props & RouteComponentProps<{}>> = ({
 	open,
 	handleCancel,
 	teamId,
-	teamIdx
+	teamIdx,
+	username
 }) => {
 	const { data, loading } = useQuery<
 		GetAllTeamMembersQueryQuery,

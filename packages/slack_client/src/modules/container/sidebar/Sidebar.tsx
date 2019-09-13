@@ -126,6 +126,7 @@ const Sidebar: React.FC<Props> = ({ teams, team, teamIdx, username }) => {
 				handleCancel={handleAddTeamMemberCancel}
 			/>
 			<DirectMessageModal
+				username={username}
 				teamIdx={teamIdx}
 				teamId={team.id}
 				open={directMessageModalVisible}
