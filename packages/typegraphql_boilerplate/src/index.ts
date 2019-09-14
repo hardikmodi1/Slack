@@ -3,6 +3,7 @@ import * as Express from "express";
 import "reflect-metadata";
 import { buildSchema } from "type-graphql";
 import { createConnection } from "typeorm";
+import createLoaders from "./loaders/createLoaders";
 import { pubsub, redis } from "./redis";
 const cors = require("cors");
 const session = require("express-session");
@@ -38,7 +39,11 @@ const main = async () => {
 
 	const apolloServer = new ApolloServer({
 		schema,
-		context: ({ req, res }: any) => ({ req, res })
+		context: ({ req, res }: any) => ({ 
+			req, 
+			res,
+			loaders:  createLoaders(req)
+		})
 		// subscriptions: {
 		// 	onConnect: (_, webSocket: any) => {
 		// 		sessionMiddleare(webSocket.upgradeReq, {} as any, () => {
