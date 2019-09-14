@@ -49,12 +49,6 @@ export class CreateMessageResolver {
 			text,
 			url: file && uniqueFileName
 		}).save();
-		// const message = new Message();
-		// message.text = text;
-		// message.userId = ctx.req.session!.userId;
-		// message.channelId = channelId;
-		// message.time = new Date();
-		// await message.save();
 		await pubSub.publish(CHANNEL_MESSAGE, message);
 		return true;
 	}
@@ -78,13 +72,8 @@ export class CreateMessageResolver {
 	}
 
 	@FieldResolver()
-	async user(@Root() parent: Message) {
-		const findOptions: FindOneOptions = {
-			relations: ["user"],
-			where: { id: parent.id }
-		};
-		const message: Message | undefined = await Message.findOne(findOptions);
-		return message!.user;
+	async user(@Root() parent: Message, @Ctx() ctx: Context) {
+		return await ctx.loaders.userLoader.load(parent.userId);
 	}
 
 	@FieldResolver()
