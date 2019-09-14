@@ -65,10 +65,8 @@ export class CreateMessageResolver {
 	}
 
 	@FieldResolver()
-	async url(@Root() parent: Message) {
-		return parent.url
-			? `http://localhost:4000/files/${parent.url}`
-			: parent.url;
+	async url(@Root() parent: Message, @Ctx() ctx: Context) {
+		return parent.url ? `${ctx.url}/files/${parent.url}` : parent.url;
 	}
 
 	@FieldResolver()

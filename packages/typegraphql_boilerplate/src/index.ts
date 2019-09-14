@@ -13,7 +13,7 @@ const http = require("http");
 const main = async () => {
 	await createConnection();
 	const schema = await buildSchema({
-		resolvers: [__dirname + "/modules/**/*.ts"],
+		resolvers: [__dirname + "/modules/**/*.?s"],
 		authChecker: ({ context: { req } }) => {
 			return !!req.session.userId;
 		},
@@ -42,7 +42,8 @@ const main = async () => {
 		context: ({ req, res }: any) => ({
 			req,
 			res,
-			loaders: createLoaders(req)
+			loaders: createLoaders(req),
+			url: `${req.protocol}://${req.get("host")}`
 		}),
 		subscriptions: {
 			onConnect: (_, webSocket: any) => {
