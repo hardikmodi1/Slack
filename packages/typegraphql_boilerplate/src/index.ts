@@ -39,21 +39,21 @@ const main = async () => {
 
 	const apolloServer = new ApolloServer({
 		schema,
-		context: ({ req, res }: any) => ({ 
-			req, 
+		context: ({ req, res }: any) => ({
+			req,
 			res,
-			loaders:  createLoaders(req)
-		})
-		// subscriptions: {
-		// 	onConnect: (_, webSocket: any) => {
-		// 		sessionMiddleare(webSocket.upgradeReq, {} as any, () => {
-		// 			if (!webSocket.upgradeReq.session.userId) {
-		// 				throw new Error("not authenticated!");
-		// 			}
-		// 		});
-		// 		return true;
-		// 	}
-		// }
+			loaders: createLoaders(req)
+		}),
+		subscriptions: {
+			onConnect: (_, webSocket: any) => {
+				sessionMiddleare(webSocket.upgradeReq, {} as any, () => {
+					if (!webSocket.upgradeReq.session.userId) {
+						throw new Error("not authenticated!");
+					}
+				});
+				return true;
+			}
+		}
 	});
 	const app = Express();
 
