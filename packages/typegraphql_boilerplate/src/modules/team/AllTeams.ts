@@ -1,5 +1,4 @@
 import { Ctx, FieldResolver, Query, Resolver, Root } from "type-graphql";
-import { getConnection } from "typeorm";
 import { Team } from "../../entity/Team";
 import { TeamMember } from "../../entity/TeamMember";
 import { Context } from "../../types/Context";
@@ -30,13 +29,6 @@ export class AllTeamsResolver {
 
 	@FieldResolver()
 	async channels(@Root() parent: Team, @Ctx() ctx: Context) {
-		const channels = await getConnection().query(
-			`select distinct on (ch.id) ch.id,ch.name, ch."dmChannel" from public.channel as ch left outer join channel_member as chm on 
-			ch.id=chm."channelId"
-			where ch."teamId"='${parent.id}' and (ch.public=true or (chm."userId"='${
-				ctx.req.session!.userId
-			}')) `
-		);
-		return channels;
+		return await ctx.loaders.channelLoader.load(parent.id);
 	}
 }
