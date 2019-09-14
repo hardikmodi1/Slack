@@ -97,7 +97,7 @@ const DirectMessageModal: React.FC<Props & RouteComponentProps<{}>> = ({
 							"Channel"
 					) {
 						history.push(
-							`/view-team/${teamId}/${response.getOrCreateDMChannel[0].id}`
+							`/${teamId}/${response.getOrCreateDMChannel[0].id}`
 						);
 						handleCancel();
 					}
@@ -158,7 +158,7 @@ const DirectMessageModal: React.FC<Props & RouteComponentProps<{}>> = ({
 												})}
 											>
 												<Link
-													to={`/view-team/user/${teamId}/${item.id}`}
+													to={`/${teamId}/${item.id}`}
 												>
 													<List.Item.Meta
 														title={item.username}

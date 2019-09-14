@@ -25,7 +25,7 @@ const CreateTeam: React.FC<RouteComponentProps<{}>> = props => {
 			} else if (createTeamData[0].path === "name") {
 				return normalizeErrors(createTeamData as any[]);
 			} else {
-				props.history.push(`/view-team/${createTeamData[0].id}`);
+				props.history.push(`/${createTeamData[0].id}`);
 			}
 		}
 		return null;

@@ -13,7 +13,7 @@ interface Props {
 
 const Teams: React.FC<Props> = ({ teams }) => {
 	const team = ({ id, name }: { id: string; name: string }) => (
-		<Link to={`/view-team/${id}`} key={`team-${id}`}>
+		<Link to={`/${id}`} key={`team-${id}`}>
 			<TeamListItem>
 				<Tooltip placement="rightBottom" title={name}>
 					{name.charAt(0).toUpperCase()}

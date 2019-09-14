@@ -38,40 +38,5 @@ export class AddTeamMemberResolver {
 			userId: user.id
 		}).save();
 		return null;
-		// const ownerPromise: Promise<Team | undefined> = Team.findOne({
-		// 	where: { teamId, userId:  },
-		// });
-		// const userToAddPromise: Promise<User | undefined> = User.findOne({
-		// 	where: { email },
-		// 	relations: ["teams_member"]
-		// });
-		// const teamMembersPromise: Promise<Team | undefined> = Team.findOne({
-		// 	where: { id: teamId },
-		// 	relations: ["members"]
-		// });
-		// const [owner, user, team] = await Promise.all([
-		// 	ownerPromise,
-		// 	userToAddPromise,
-		// 	teamMembersPromise
-		// ]);
-		// if (owner!.owner.id !== ctx.req.session.userId) {
-		// 	return ComposeErrorMessage(
-		// 		"name",
-		// 		"Only owner is allowed to add memeber to the team!"
-		// 	);
-		// }
-		// //if user with given id does not exist or account is deleted
-		// if (!user) {
-		// 	return ComposeErrorMessage("name", "User does not exist");
-		// }
-
-		// if (!team) {
-		// 	return ComposeErrorMessage("name", "Team does not exist");
-		// }
-		// team.members = [...team.members, user];
-		// await team.save();
-		// user.teams_member = [...user.teams_member, team];
-		// await user.save();
-		// return null;
 	}
 }

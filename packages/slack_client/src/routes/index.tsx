@@ -1,6 +1,5 @@
 import * as React from "react";
 import { BrowserRouter, Switch } from "react-router-dom";
-import ViewTeam from "../modules/container/ViewTeam";
 import ViewTeamContainer from "../modules/container/ViewTeamContainer";
 import CreateTeam from "../modules/team/create/CreateTeamConnector";
 import Login from "../modules/user/login/LoginConnector";
@@ -18,10 +17,9 @@ const Routes = () => (
 				path="/create-team"
 				component={CreateTeam}
 			/>
-			<AuthRoute exact={true} path="/" component={ViewTeam} />
 			<AuthRoute
 				exact={true}
-				path="/view-team/:teamId?/:channelId?"
+				path="/:teamId?/:channelId?"
 				component={ViewTeamContainer}
 			/>
 		</Switch>

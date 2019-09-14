@@ -3,6 +3,7 @@ import ApolloClient from "apollo-client";
 import { Field, Form, FormikProps, withFormik } from "formik";
 import * as React from "react";
 import { Link } from "react-router-dom";
+import { wsLink } from "../../../apollo";
 import { LoginMutationMutationVariables } from "../../../generated/graphqlTypes";
 import { InputField } from "../../shared/InputField";
 import { NormalizedErrorMap } from "../../shared/normalizedErrorMap";
@@ -85,7 +86,8 @@ const LoginView = withFormik<Props, FormValues>({
 		if (errors) {
 			setErrors(errors);
 		} else {
-			// await props.client.resetStore();
+			// @ts-ignore
+			wsLink.subscriptionClient.tryReconnect();
 			props.onFinish();
 		}
 	}

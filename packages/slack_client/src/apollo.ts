@@ -1,8 +1,11 @@
-import { InMemoryCache, IntrospectionFragmentMatcher } from "apollo-cache-inmemory";
+import {
+	InMemoryCache,
+	IntrospectionFragmentMatcher
+} from "apollo-cache-inmemory";
 import { ApolloClient } from "apollo-client";
 import { split } from "apollo-link";
 import { WebSocketLink } from "apollo-link-ws";
-import { createUploadLink } from 'apollo-upload-client';
+import { createUploadLink } from "apollo-upload-client";
 import { getMainDefinition } from "apollo-utilities";
 import introspectionQueryResultData from "./generated/graphqlTypes";
 
@@ -11,7 +14,7 @@ const httpLink = createUploadLink({
 	uri: "http://localhost:4000/graphql"
 });
 
-const wsLink = new WebSocketLink({
+export const wsLink = new WebSocketLink({
 	uri: `ws://localhost:4000/graphql`,
 	options: {
 		reconnect: true

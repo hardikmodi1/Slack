@@ -33,13 +33,13 @@ const Channels: React.FC<Props> = ({
 	onDirectMessageClick
 }) => {
 	const channel = ({ id, name }: { id: string; name: string }) => (
-		<Link to={`/view-team/${team.id}/${id}`} key={`channel-${id}`}>
+		<Link to={`/${team.id}/${id}`} key={`channel-${id}`}>
 			<SideBarListItem># {name}</SideBarListItem>
 		</Link>
 	);
 
 	const user = ({ id, name }: { id: string; name: string }) => (
-		<Link to={`/view-team/${team.id}/${id}`} key={`dmChannel-${id}`}>
+		<Link to={`/${team.id}/${id}`} key={`dmChannel-${id}`}>
 			<SideBarListItem>
 				<Bubble me={username === name} />{" "}
 				{findDisplayName(name, username)}
