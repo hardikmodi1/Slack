@@ -17,7 +17,8 @@ const httpLink = createUploadLink({
 export const wsLink = new WebSocketLink({
 	uri: `ws://localhost:4000/graphql`,
 	options: {
-		reconnect: true
+		reconnect: true,
+		lazy: true
 	}
 });
 

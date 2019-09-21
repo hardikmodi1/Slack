@@ -32,9 +32,24 @@ const Channels: React.FC<Props> = ({
 	onAddTeamMemberClick,
 	onDirectMessageClick
 }) => {
-	const channel = ({ id, name }: { id: string; name: string }) => (
+	const channel = ({
+		id,
+		name,
+		public: isPublic
+	}: {
+		id: string;
+		name: string;
+		public: boolean;
+	}) => (
 		<Link to={`/${team.id}/${id}`} key={`channel-${id}`}>
-			<SideBarListItem># {name}</SideBarListItem>
+			<SideBarListItem>
+				<Icon
+					type={isPublic ? "unlock" : "lock"}
+					theme="filled"
+					style={{ color: "green" }}
+				/>{" "}
+				# {name}
+			</SideBarListItem>
 		</Link>
 	);
 

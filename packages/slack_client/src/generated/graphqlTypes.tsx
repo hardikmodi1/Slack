@@ -29,8 +29,9 @@ export type Channel = {
   name: Scalars['String'],
   public: Scalars['Boolean'],
   dmChannel?: Maybe<Scalars['Boolean']>,
-  members: Array<ChannelMember>,
+  members: Array<User>,
   messages: Array<Message>,
+  memberCount: Scalars['Float'],
 };
 
 export type ChannelMember = {
@@ -151,12 +152,18 @@ export type PasswordInput = {
 
 export type Query = {
   __typename?: 'Query',
+  getChannelDetails?: Maybe<Channel>,
   allMessages: Array<Message>,
   teams?: Maybe<Array<TeamMember>>,
   getAllTeamMembers: Array<User>,
   getUserById?: Maybe<User>,
   me?: Maybe<User>,
   hello: Scalars['String'],
+};
+
+
+export type QueryGetChannelDetailsArgs = {
+  channelId: Scalars['String']
 };
 
 
@@ -230,7 +237,7 @@ export type CreateChannelMutationMutation = (
     & Pick<Error, 'path' | 'message'>
   ) | (
     { __typename?: 'Channel' }
-    & Pick<Channel, 'id' | 'name' | 'dmChannel'>
+    & Pick<Channel, 'id' | 'name' | 'dmChannel' | 'public' | 'memberCount'>
   )> }
 );
 
@@ -248,6 +255,23 @@ export type GetOrCreateDmChannelMutationMutation = (
   ) | (
     { __typename?: 'Channel' }
     & Pick<Channel, 'id' | 'name' | 'dmChannel'>
+  )> }
+);
+
+export type GetChannelsDetailsQueryQueryVariables = {
+  channelId: Scalars['String']
+};
+
+
+export type GetChannelsDetailsQueryQuery = (
+  { __typename?: 'Query' }
+  & { getChannelDetails: Maybe<(
+    { __typename?: 'Channel' }
+    & Pick<Channel, 'id' | 'name'>
+    & { members: Array<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'email' | 'username'>
+    )> }
   )> }
 );
 
@@ -341,7 +365,7 @@ export type TeamsQueryQuery = (
       & Pick<Team, 'id' | 'name'>
       & { channels: Array<(
         { __typename?: 'Channel' }
-        & Pick<Channel, 'id' | 'name' | 'dmChannel'>
+        & Pick<Channel, 'id' | 'name' | 'public' | 'dmChannel' | 'memberCount'>
       )> }
     ) }
   )>> }
@@ -424,6 +448,8 @@ export const CreateChannelMutationDocument = gql`
       id
       name
       dmChannel
+      public
+      memberCount
     }
   }
 }
@@ -483,6 +509,37 @@ export function withGetOrCreateDmChannelMutation<TProps, TChildProps = {}>(opera
 };
 export type GetOrCreateDmChannelMutationMutationResult = ApolloReactCommon.MutationResult<GetOrCreateDmChannelMutationMutation>;
 export type GetOrCreateDmChannelMutationMutationOptions = ApolloReactCommon.BaseMutationOptions<GetOrCreateDmChannelMutationMutation, GetOrCreateDmChannelMutationMutationVariables>;
+export const GetChannelsDetailsQueryDocument = gql`
+    query GetChannelsDetailsQuery($channelId: String!) {
+  getChannelDetails(channelId: $channelId) {
+    id
+    name
+    members {
+      id
+      email
+      username
+    }
+  }
+}
+    `;
+export type GetChannelsDetailsQueryComponentProps = Omit<ApolloReactComponents.QueryComponentOptions<GetChannelsDetailsQueryQuery, GetChannelsDetailsQueryQueryVariables>, 'query'> & ({ variables: GetChannelsDetailsQueryQueryVariables; skip?: boolean; } | { skip: boolean; });
+
+    export const GetChannelsDetailsQueryComponent = (props: GetChannelsDetailsQueryComponentProps) => (
+      <ApolloReactComponents.Query<GetChannelsDetailsQueryQuery, GetChannelsDetailsQueryQueryVariables> query={GetChannelsDetailsQueryDocument} {...props} />
+    );
+    
+export type GetChannelsDetailsQueryProps<TChildProps = {}> = ApolloReactHoc.DataProps<GetChannelsDetailsQueryQuery, GetChannelsDetailsQueryQueryVariables> & TChildProps;
+export function withGetChannelsDetailsQuery<TProps, TChildProps = {}>(operationOptions?: ApolloReactHoc.OperationOption<
+  TProps,
+  GetChannelsDetailsQueryQuery,
+  GetChannelsDetailsQueryQueryVariables,
+  GetChannelsDetailsQueryProps<TChildProps>>) {
+    return ApolloReactHoc.withQuery<TProps, GetChannelsDetailsQueryQuery, GetChannelsDetailsQueryQueryVariables, GetChannelsDetailsQueryProps<TChildProps>>(GetChannelsDetailsQueryDocument, {
+      alias: 'withGetChannelsDetailsQuery',
+      ...operationOptions
+    });
+};
+export type GetChannelsDetailsQueryQueryResult = ApolloReactCommon.QueryResult<GetChannelsDetailsQueryQuery, GetChannelsDetailsQueryQueryVariables>;
 export const CreateMessageMutationDocument = gql`
     mutation CreateMessageMutation($text: String, $channelId: String!, $file: Upload) {
   createMessage(data: {text: $text, channelId: $channelId}, file: $file)
@@ -646,7 +703,9 @@ export const TeamsQueryDocument = gql`
       channels {
         id
         name
+        public
         dmChannel
+        memberCount
       }
     }
   }

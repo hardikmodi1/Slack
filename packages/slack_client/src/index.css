@@ -1,5 +1,31 @@
 body {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
+	margin: 0;
+	padding: 0;
+	font-family: "Roboto", sans-serif;
+	font-weight: 500;
+	font-variant-ligatures: common-ligatures;
+	color: rgb(29, 28, 29);
+}
+
+.ant-comment-content-author-name {
+	font-weight: bolder;
+	color: black;
+	font-size: 15px !important;
+}
+
+.ant-comment-content-detail {
+	color: rgba(0, 0, 0, 0.8);
+}
+
+.ant-page-header {
+	padding-bottom: 0px;
+}
+
+.channelInfoUsername {
+	font-weight: bold;
+}
+
+.channelInfoUsername:hover {
+	background: #1164a3;
+	color: white;
 }

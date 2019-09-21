@@ -10,7 +10,9 @@ export const TEAMS_QUERY = gql`
 				channels {
 					id
 					name
+					public
 					dmChannel
+					memberCount
 				}
 			}
 		}
