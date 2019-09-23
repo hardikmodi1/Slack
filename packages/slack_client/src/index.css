@@ -23,9 +23,11 @@ body {
 
 .channelInfoUsername {
 	font-weight: bold;
+	border-radius: 5px;
 }
 
 .channelInfoUsername:hover {
 	background: #1164a3;
 	color: white;
+	cursor: pointer;
 }

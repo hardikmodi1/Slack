@@ -8,14 +8,16 @@ import ChannelInfo from "./ChannelInfo";
 interface Props {
 	channel: Channel;
 	username: string;
+	teamId: string;
+	teamIdx: number;
 }
 
-const Title: React.FC<Props> = ({ channel, username }) => {
+const Title: React.FC<Props> = ({ channel, username, teamId, teamIdx }) => {
 	const [visible, setVisible] = React.useState<boolean>(false);
-	function showDrover() {
+	function showDrawer() {
 		setVisible(true);
 	}
-	function hideDrover() {
+	function hideDrawer() {
 		setVisible(false);
 	}
 	return (
@@ -29,14 +31,16 @@ const Title: React.FC<Props> = ({ channel, username }) => {
 			{channel.dmChannel === true || channel.public ? (
 				""
 			) : (
-				<Subtitle onClick={showDrover}>
+				<Subtitle onClick={showDrawer}>
 					<Icon type="user" style={{ paddingRight: "5px" }} />
 					{channel.memberCount}
 				</Subtitle>
 			)}
 			<ChannelInfo
+				teamId={teamId}
+				teamIdx={teamIdx}
 				visible={visible}
-				onClose={hideDrover}
+				onClose={hideDrawer}
 				channel={channel}
 			/>
 		</div>

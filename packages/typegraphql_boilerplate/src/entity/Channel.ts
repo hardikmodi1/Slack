@@ -10,6 +10,7 @@ import {
 import { ChannelMember } from "./ChannelMember";
 import { Message } from "./Message";
 import { Team } from "./Team";
+import { User } from "./User";
 
 @ObjectType()
 @Entity()
@@ -36,11 +37,14 @@ export class Channel extends BaseEntity {
 	@ManyToOne(() => Team, team => team.channels)
 	team: Team;
 
-	@Field(() => [ChannelMember])
+	@Field(() => [User])
 	@OneToMany(() => ChannelMember, channelMember => channelMember.channel)
 	members: ChannelMember[];
 
 	@Field(() => [Message])
 	@OneToMany(() => Message, message => message.channel)
 	messages: Message[];
+
+	@Field()
+	memberCount: number;
 }

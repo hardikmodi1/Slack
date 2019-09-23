@@ -7,8 +7,6 @@ export class NewMessageResolver {
 	@Subscription({
 		topics: CHANNEL_MESSAGE,
 		filter: ({ payload, args }) => {
-			console.log(args);
-			console.log(payload);
 			return args.channelId === payload.channelId;
 		}
 	})
@@ -17,6 +15,7 @@ export class NewMessageResolver {
 		@Arg("channelId") channelId: string
 	): Message {
 		console.log(channelId);
+		console.log(MessagePayload);
 		return MessagePayload;
 	}
 }

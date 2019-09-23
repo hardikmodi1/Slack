@@ -37,12 +37,13 @@ const MessageContainer: React.FC<Props> = ({ channelId }) => {
 				if (!subscriptionData.data) {
 					return prev;
 				}
+				const newMessage = {
+					...subscriptionData.data.newMessage,
+					time: new Date().toISOString()
+				};
 				return {
 					...prev,
-					allMessages: [
-						...prev.allMessages,
-						subscriptionData.data.newMessage
-					]
+					allMessages: [...prev.allMessages, newMessage]
 				};
 			}
 		});
@@ -105,14 +106,33 @@ const MessageContainer: React.FC<Props> = ({ channelId }) => {
 							className="comment-list"
 							itemLayout="horizontal"
 							dataSource={data!.allMessages}
-							renderItem={message => (
+							renderItem={(message, index) => (
 								<li>
+									{index > 0 &&
+										new Date(
+											message.time
+										).toLocaleDateString() !==
+											new Date(
+												data!.allMessages[
+													index - 1
+												].time
+											).toLocaleDateString() && (
+											<strong>
+												{new Date(
+													message.time
+												).toLocaleDateString()}
+											</strong>
+										)}
 									<Comment
 										author={message.user!.username}
 										content={
 											<DisplayMessae message={message} />
 										}
-										datetime={message.time}
+										datetime={`${new Date(
+											message.time
+										).getHours()}:${new Date(
+											message.time
+										).getMinutes()}`}
 									/>
 								</li>
 							)}

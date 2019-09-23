@@ -43,7 +43,7 @@ const main = async () => {
 			req,
 			res,
 			loaders: createLoaders(req),
-			url: `${req.protocol}://${req.get("host")}`
+			url: req ? `${req.protocol}://${req.get("host")}` : ''
 		}),
 		subscriptions: {
 			onConnect: (_, webSocket: any) => {

@@ -82,12 +82,12 @@ export class CreateChannelResolver {
 
 	@FieldResolver()
 	async members(@Root() parent: Channel) {
-		const findOptions: FindOneOptions = {
-			relations: ["members"],
-			where: { id: parent.id }
-		};
-		const channel: Channel | undefined = await Channel.findOne(findOptions);
-		return channel!.members;
+		const members = getConnection().query(`
+			select * from public.channel_member as chm 
+			join public.user as u on u.id=chm."userId" 
+			where chm."channelId"='${parent.id}'
+		`);
+		return members;
 	}
 
 	@FieldResolver()
@@ -98,5 +98,10 @@ export class CreateChannelResolver {
 		};
 		const channel: Channel | undefined = await Channel.findOne(findOptions);
 		return channel!.messages;
+	}
+
+	@FieldResolver()
+	async memberCount(@Root() parent: Channel, @Ctx() ctx: Context) {
+		return await ctx.loaders.channelMemberCountLoader.load(parent.id);
 	}
 }
