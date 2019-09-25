@@ -17,6 +17,9 @@ export class GetOrCreateDMChannelResolver {
 		if (!ctx.req.session!.userId) {
 			return [ComposeErrorMessage("login", "Session expired!")];
 		}
+		if(member===""){
+			return [ComposeErrorMessage("login", "No member is provided")]
+		}
 		const members: string[] = [member, ctx.req.session!.userId];
 		console.log(members);
 		const isDMChannelExists = await getConnection().query(`

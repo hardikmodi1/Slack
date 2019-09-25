@@ -56,6 +56,10 @@ const ViewTeam: React.FC<Props> = ({
 			/>
 			{channel && (
 				<Header
+					teamId={team.id}
+					teamIdx={teamIdx}
+					channel={channel}
+					username={username}
 					channelName={
 						channel.dmChannel
 							? findDisplayName(channel.name, username)
@@ -68,11 +72,6 @@ const ViewTeam: React.FC<Props> = ({
 				<SendMessage
 					submit={sendMessageSubmit}
 					channelId={channel.id}
-					channelName={
-						channel.dmChannel
-							? findDisplayName(channel.name, username)
-							: channel.name
-					}
 				/>
 			)}
 		</Container>

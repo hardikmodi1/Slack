@@ -29,8 +29,12 @@ export type Channel = {
   name: Scalars['String'],
   public: Scalars['Boolean'],
   dmChannel?: Maybe<Scalars['Boolean']>,
-  members: Array<ChannelMember>,
+  members: Array<User>,
   messages: Array<Message>,
+  pinnedMessages: Array<PinnedMessages>,
+  memberCount: Scalars['Float'],
+  pinnedMessagesCount: Scalars['Float'],
+  files: Array<Message>,
 };
 
 export type ChannelMember = {
@@ -81,6 +85,7 @@ export type Mutation = {
   createChannel: Array<CreateChannelOutput>,
   getOrCreateDMChannel: Array<CreateChannelOutput>,
   createMessage: Scalars['Boolean'],
+  pinMessage: Scalars['Boolean'],
   addTeamMember?: Maybe<Error>,
   createTeam?: Maybe<Array<CreateTeamOutput>>,
   changePassword?: Maybe<User>,
@@ -106,6 +111,12 @@ export type MutationGetOrCreateDmChannelArgs = {
 export type MutationCreateMessageArgs = {
   file?: Maybe<Scalars['Upload']>,
   data: CreateMessageInput
+};
+
+
+export type MutationPinMessageArgs = {
+  messageId: Scalars['String'],
+  channelId: Scalars['String']
 };
 
 
@@ -149,14 +160,28 @@ export type PasswordInput = {
   password: Scalars['String'],
 };
 
+export type PinnedMessages = {
+  __typename?: 'PinnedMessages',
+  id: Scalars['ID'],
+  channel?: Maybe<Channel>,
+  user?: Maybe<User>,
+  pinnedMessage: Message,
+};
+
 export type Query = {
   __typename?: 'Query',
+  getChannelDetails?: Maybe<Channel>,
   allMessages: Array<Message>,
   teams?: Maybe<Array<TeamMember>>,
   getAllTeamMembers: Array<User>,
   getUserById?: Maybe<User>,
   me?: Maybe<User>,
   hello: Scalars['String'],
+};
+
+
+export type QueryGetChannelDetailsArgs = {
+  channelId: Scalars['String']
 };
 
 
@@ -214,6 +239,7 @@ export type User = {
   id: Scalars['ID'],
   email: Scalars['String'],
   username: Scalars['String'],
+  pinnedMessagesOfUser: Array<PinnedMessages>,
 };
 export type CreateChannelMutationMutationVariables = {
   name: Scalars['String'],
@@ -230,7 +256,7 @@ export type CreateChannelMutationMutation = (
     & Pick<Error, 'path' | 'message'>
   ) | (
     { __typename?: 'Channel' }
-    & Pick<Channel, 'id' | 'name' | 'dmChannel'>
+    & Pick<Channel, 'id' | 'name' | 'dmChannel' | 'public' | 'memberCount'>
   )> }
 );
 
@@ -251,6 +277,36 @@ export type GetOrCreateDmChannelMutationMutation = (
   )> }
 );
 
+export type GetChannelsDetailsQueryQueryVariables = {
+  channelId: Scalars['String']
+};
+
+
+export type GetChannelsDetailsQueryQuery = (
+  { __typename?: 'Query' }
+  & { getChannelDetails: Maybe<(
+    { __typename?: 'Channel' }
+    & Pick<Channel, 'id' | 'name' | 'pinnedMessagesCount'>
+    & { files: Array<(
+      { __typename?: 'Message' }
+      & Pick<Message, 'type' | 'url' | 'originalName'>
+    )>, members: Array<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'email' | 'username'>
+    )>, pinnedMessages: Array<(
+      { __typename?: 'PinnedMessages' }
+      & Pick<PinnedMessages, 'id'>
+      & { user: Maybe<(
+        { __typename?: 'User' }
+        & Pick<User, 'username'>
+      )>, pinnedMessage: (
+        { __typename?: 'Message' }
+        & Pick<Message, 'id' | 'text' | 'url' | 'type' | 'originalName'>
+      ) }
+    )> }
+  )> }
+);
+
 export type CreateMessageMutationMutationVariables = {
   text?: Maybe<Scalars['String']>,
   channelId: Scalars['String'],
@@ -261,6 +317,17 @@ export type CreateMessageMutationMutationVariables = {
 export type CreateMessageMutationMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'createMessage'>
+);
+
+export type PinMessageMutationMutationVariables = {
+  messageId: Scalars['String'],
+  channelId: Scalars['String']
+};
+
+
+export type PinMessageMutationMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'pinMessage'>
 );
 
 export type AllMessagesQueryQueryVariables = {
@@ -341,7 +408,7 @@ export type TeamsQueryQuery = (
       & Pick<Team, 'id' | 'name'>
       & { channels: Array<(
         { __typename?: 'Channel' }
-        & Pick<Channel, 'id' | 'name' | 'dmChannel'>
+        & Pick<Channel, 'id' | 'name' | 'public' | 'dmChannel' | 'memberCount' | 'pinnedMessagesCount'>
       )> }
     ) }
   )>> }
@@ -424,6 +491,8 @@ export const CreateChannelMutationDocument = gql`
       id
       name
       dmChannel
+      public
+      memberCount
     }
   }
 }
@@ -483,6 +552,56 @@ export function withGetOrCreateDmChannelMutation<TProps, TChildProps = {}>(opera
 };
 export type GetOrCreateDmChannelMutationMutationResult = ApolloReactCommon.MutationResult<GetOrCreateDmChannelMutationMutation>;
 export type GetOrCreateDmChannelMutationMutationOptions = ApolloReactCommon.BaseMutationOptions<GetOrCreateDmChannelMutationMutation, GetOrCreateDmChannelMutationMutationVariables>;
+export const GetChannelsDetailsQueryDocument = gql`
+    query GetChannelsDetailsQuery($channelId: String!) {
+  getChannelDetails(channelId: $channelId) {
+    files {
+      type
+      url
+      originalName
+    }
+    id
+    name
+    members {
+      id
+      email
+      username
+    }
+    pinnedMessagesCount
+    pinnedMessages {
+      id
+      user {
+        username
+      }
+      pinnedMessage {
+        id
+        text
+        url
+        type
+        originalName
+      }
+    }
+  }
+}
+    `;
+export type GetChannelsDetailsQueryComponentProps = Omit<ApolloReactComponents.QueryComponentOptions<GetChannelsDetailsQueryQuery, GetChannelsDetailsQueryQueryVariables>, 'query'> & ({ variables: GetChannelsDetailsQueryQueryVariables; skip?: boolean; } | { skip: boolean; });
+
+    export const GetChannelsDetailsQueryComponent = (props: GetChannelsDetailsQueryComponentProps) => (
+      <ApolloReactComponents.Query<GetChannelsDetailsQueryQuery, GetChannelsDetailsQueryQueryVariables> query={GetChannelsDetailsQueryDocument} {...props} />
+    );
+    
+export type GetChannelsDetailsQueryProps<TChildProps = {}> = ApolloReactHoc.DataProps<GetChannelsDetailsQueryQuery, GetChannelsDetailsQueryQueryVariables> & TChildProps;
+export function withGetChannelsDetailsQuery<TProps, TChildProps = {}>(operationOptions?: ApolloReactHoc.OperationOption<
+  TProps,
+  GetChannelsDetailsQueryQuery,
+  GetChannelsDetailsQueryQueryVariables,
+  GetChannelsDetailsQueryProps<TChildProps>>) {
+    return ApolloReactHoc.withQuery<TProps, GetChannelsDetailsQueryQuery, GetChannelsDetailsQueryQueryVariables, GetChannelsDetailsQueryProps<TChildProps>>(GetChannelsDetailsQueryDocument, {
+      alias: 'withGetChannelsDetailsQuery',
+      ...operationOptions
+    });
+};
+export type GetChannelsDetailsQueryQueryResult = ApolloReactCommon.QueryResult<GetChannelsDetailsQueryQuery, GetChannelsDetailsQueryQueryVariables>;
 export const CreateMessageMutationDocument = gql`
     mutation CreateMessageMutation($text: String, $channelId: String!, $file: Upload) {
   createMessage(data: {text: $text, channelId: $channelId}, file: $file)
@@ -508,6 +627,31 @@ export function withCreateMessageMutation<TProps, TChildProps = {}>(operationOpt
 };
 export type CreateMessageMutationMutationResult = ApolloReactCommon.MutationResult<CreateMessageMutationMutation>;
 export type CreateMessageMutationMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateMessageMutationMutation, CreateMessageMutationMutationVariables>;
+export const PinMessageMutationDocument = gql`
+    mutation PinMessageMutation($messageId: String!, $channelId: String!) {
+  pinMessage(messageId: $messageId, channelId: $channelId)
+}
+    `;
+export type PinMessageMutationMutationFn = ApolloReactCommon.MutationFunction<PinMessageMutationMutation, PinMessageMutationMutationVariables>;
+export type PinMessageMutationComponentProps = Omit<ApolloReactComponents.MutationComponentOptions<PinMessageMutationMutation, PinMessageMutationMutationVariables>, 'mutation'>;
+
+    export const PinMessageMutationComponent = (props: PinMessageMutationComponentProps) => (
+      <ApolloReactComponents.Mutation<PinMessageMutationMutation, PinMessageMutationMutationVariables> mutation={PinMessageMutationDocument} {...props} />
+    );
+    
+export type PinMessageMutationProps<TChildProps = {}> = ApolloReactHoc.MutateProps<PinMessageMutationMutation, PinMessageMutationMutationVariables> & TChildProps;
+export function withPinMessageMutation<TProps, TChildProps = {}>(operationOptions?: ApolloReactHoc.OperationOption<
+  TProps,
+  PinMessageMutationMutation,
+  PinMessageMutationMutationVariables,
+  PinMessageMutationProps<TChildProps>>) {
+    return ApolloReactHoc.withMutation<TProps, PinMessageMutationMutation, PinMessageMutationMutationVariables, PinMessageMutationProps<TChildProps>>(PinMessageMutationDocument, {
+      alias: 'withPinMessageMutation',
+      ...operationOptions
+    });
+};
+export type PinMessageMutationMutationResult = ApolloReactCommon.MutationResult<PinMessageMutationMutation>;
+export type PinMessageMutationMutationOptions = ApolloReactCommon.BaseMutationOptions<PinMessageMutationMutation, PinMessageMutationMutationVariables>;
 export const AllMessagesQueryDocument = gql`
     query AllMessagesQuery($channelId: String!, $offset: Float!) {
   allMessages(channelId: $channelId, offset: $offset) {
@@ -646,7 +790,10 @@ export const TeamsQueryDocument = gql`
       channels {
         id
         name
+        public
         dmChannel
+        memberCount
+        pinnedMessagesCount
       }
     }
   }

@@ -8,6 +8,7 @@ import {
 } from "typeorm";
 import { ChannelMember } from "./ChannelMember";
 import { Message } from "./Message";
+import { PinnedMessages } from "./PinnedMessages";
 import { TeamMember } from "./TeamMember";
 
 @ObjectType()
@@ -39,4 +40,8 @@ export class User extends BaseEntity {
 
 	@OneToMany(() => ChannelMember, channelMember => channelMember.user)
 	member_of_channels: ChannelMember[];
+
+	@Field(() => [PinnedMessages])
+	@OneToMany(() => PinnedMessages, pinnedMessages => pinnedMessages.user)
+	pinnedMessagesOfUser: PinnedMessages[];
 }

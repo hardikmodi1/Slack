@@ -1,4 +1,4 @@
-import { Comment, List } from "antd";
+import { Col, Comment, Divider, List, Row } from "antd";
 import * as React from "react";
 import { useQuery } from "react-apollo";
 import {
@@ -11,6 +11,8 @@ import { ALL_MESSAGES_QUERY } from "src/modules/graphql/message/query/allMessage
 import { NEW_MEESSAGE_SUBSCRIPTION } from "../../../modules/graphql/message/subscription/newessage";
 import AttachFile from "./AttachFile";
 import DisplayMessae from "./messageContainer/DisplayMessage";
+import MessageActions from "./messageContainer/MessageActions";
+import { expandDate } from "./shared/expandDate";
 
 interface Props {
 	channelId: string;
@@ -37,12 +39,13 @@ const MessageContainer: React.FC<Props> = ({ channelId }) => {
 				if (!subscriptionData.data) {
 					return prev;
 				}
+				const newMessage = {
+					...subscriptionData.data.newMessage,
+					time: new Date().toISOString()
+				};
 				return {
 					...prev,
-					allMessages: [
-						...prev.allMessages,
-						subscriptionData.data.newMessage
-					]
+					allMessages: [...prev.allMessages, newMessage]
 				};
 			}
 		});
@@ -105,15 +108,58 @@ const MessageContainer: React.FC<Props> = ({ channelId }) => {
 							className="comment-list"
 							itemLayout="horizontal"
 							dataSource={data!.allMessages}
-							renderItem={message => (
+							renderItem={(message, index) => (
 								<li>
-									<Comment
-										author={message.user!.username}
-										content={
-											<DisplayMessae message={message} />
-										}
-										datetime={message.time}
-									/>
+									{index === 0 && (
+										<Divider>
+											{expandDate(new Date(message.time))}
+										</Divider>
+									)}
+									{index > 0 &&
+										new Date(
+											message.time
+										).toLocaleDateString() !==
+											new Date(
+												data!.allMessages[
+													index - 1
+												].time
+											).toLocaleDateString() && (
+											<Divider>
+												{expandDate(
+													new Date(message.time)
+												)}
+											</Divider>
+										)}
+									<div className="message">
+										<Row>
+											<Col
+												span={1}
+												offset={23}
+												className="messageActions"
+											>
+												<MessageActions
+													message={message}
+													channelId={channelId}
+													messageId={message.id}
+												/>
+											</Col>
+										</Row>
+										<Row>
+											<Comment
+												author={message.user!.username}
+												content={
+													<DisplayMessae
+														message={message}
+													/>
+												}
+												datetime={`${new Date(
+													message.time
+												).getHours()}:${new Date(
+													message.time
+												).getMinutes()}`}
+											/>
+										</Row>
+									</div>
 								</li>
 							)}
 						/>

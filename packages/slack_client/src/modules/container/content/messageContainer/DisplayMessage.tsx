@@ -11,20 +11,20 @@ const DisplayMessae: React.FC<Props> = ({
 	message: { text, type, url, originalName }
 }) => {
 	if (!type) {
-		return <p>{text}</p>;
+		return <p dangerouslySetInnerHTML={{ __html: text }} />;
 	}
 	if (type.startsWith("image/")) {
 		return <img width="50%" src={url} alt={originalName} />;
-  }
-  if(type.startsWith('audio')){
-    return (
-      <div>
-        <audio controls={true}>
-          <source src={url} type={type} />
-        </audio>
-      </div>
-    )
-  }
+	}
+	if (type.startsWith("audio")) {
+		return (
+			<div>
+				<audio controls={true}>
+					<source src={url} type={type} />
+				</audio>
+			</div>
+		);
+	}
 	return (
 		<FileWrapper style={{ width: "25%" }}>
 			<a href={url} download={url}>
