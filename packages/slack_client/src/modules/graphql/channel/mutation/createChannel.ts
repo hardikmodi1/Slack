@@ -23,6 +23,8 @@ export const CREATE_CHANNEL_MUTATION = gql`
 				id
 				name
 				dmChannel
+				public
+				memberCount
 			}
 		}
 	}

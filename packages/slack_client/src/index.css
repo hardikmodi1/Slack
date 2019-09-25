@@ -1,5 +1,85 @@
 body {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
+	margin: 0;
+	padding: 0;
+	font-family: "Roboto", sans-serif;
+	font-weight: 500;
+	font-variant-ligatures: common-ligatures;
+	color: rgb(29, 28, 29);
+}
+
+.ant-comment-content-author-name {
+	font-weight: bolder;
+	color: black;
+	font-size: 15px !important;
+}
+
+.ant-comment-content-detail {
+	color: rgba(0, 0, 0, 0.8);
+}
+
+.ant-page-header {
+	padding-bottom: 0px;
+}
+
+.channelInfoUsername {
+	font-weight: bold;
+	border-radius: 5px;
+}
+
+.channelInfoUsername:hover {
+	background: #1164a3;
+	color: white;
+	cursor: pointer;
+}
+
+.strike {
+	display: block;
+	text-align: center;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.strike > span {
+	position: relative;
+	display: inline-block;
+}
+
+.strike > span:before,
+.strike > span:after {
+	content: "";
+	position: absolute;
+	top: 50%;
+	width: 9999px;
+	height: 1px;
+	background: black;
+}
+
+.strike > span:before {
+	right: 100%;
+	margin-right: 15px;
+}
+
+.strike > span:after {
+	left: 100%;
+	margin-left: 15px;
+}
+
+.messageActions {
+	opacity: 0;
+}
+
+.message:hover {
+	background-color: rgba(220, 220, 220, 0.5);
+}
+
+.message:hover .messageActions {
+	opacity: 1;
+}
+
+.icon-spacing {
+	padding-right: 5px;
+}
+
+.messageAction:hover {
+	cursor: pointer;
 }
